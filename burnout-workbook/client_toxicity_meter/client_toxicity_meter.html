@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Toxicity Meter - Freelancer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .warning-banner {
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid white;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .client-form {
+            background: #f8f9fc;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #e1e8ed;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255,107,107,0.1);
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,107,107,0.3);
+        }
+
+        .assessment-section {
+            display: none;
+        }
+
+        .assessment-section.active {
+            display: block;
+        }
+
+        .question-container {
+            background: white;
+            border: 2px solid #e1e8ed;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .question-container:hover {
+            border-color: #ff6b6b;
+            box-shadow: 0 5px 20px rgba(255,107,107,0.1);
+        }
+
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            background: #ff6b6b;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            background: #f8f9fc;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .option.selected {
+            border-color: #ff6b6b;
+            background: linear-gradient(135deg, #ff6b6b10, #ee5a2410);
+        }
+
+        .option-text {
+            font-size: 1rem;
+            color: #2c3e50;
+            flex: 1;
+        }
+
+        .option-score {
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .progress-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e1e8ed;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(46,204,113,0.3);
+        }
+
+        .calculate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            display: none;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .toxicity-meter {
+            width: 250px;
+            height: 250px;
+            margin: 30px auto;
+            position: relative;
+            background: conic-gradient(#2ecc71 0deg 72deg, #f1c40f 72deg 144deg, #e67e22 144deg 216deg, #e74c3c 216deg 360deg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .meter-inner {
+            width: 180px;
+            height: 180px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        .meter-score {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .meter-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .meter-pointer {
+            position: absolute;
+            width: 4px;
+            height: 100px;
+            background: #2c3e50;
+            top: 25px;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(0deg);
+            transition: transform 1s ease;
+        }
+
+        .meter-pointer::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -4px;
+            width: 12px;
+            height: 12px;
+            background: #2c3e50;
+            border-radius: 50%;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            text-align: left;
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .result-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #5a6c7d;
+            margin-bottom: 25px;
+        }
+
+        .recommendations {
+            background: #f8f9fc;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .recommendations h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .rec-list {
+            list-style: none;
+        }
+
+        .rec-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 3px solid #ff6b6b;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .urgency-banner {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            margin-top: 30px;
+        }
+
+        .level-safe { color: #2ecc71; }
+        .level-watch { color: #f1c40f; }
+        .level-danger { color: #e67e22; }
+        .level-toxic { color: #e74c3c; }
+
+        .client-info {
+            background: #f8f9fc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        @media (max-width: 768px) {
+            .toxicity-meter {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .meter-inner {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .meter-score {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 CLIENT TOXICITY METER</h1>
+            <p>Scopri se i tuoi clienti stanno distruggendo il tuo benessere mentale</p>
+            <div class="warning-banner">
+                <strong>⚠️ IMPORTANTE:</strong> Questo strumento non sostituisce il buon senso. Se un cliente ti fa stare male, probabilmente è tossico a prescindere dal punteggio.
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Form iniziale -->
+            <div id="clientForm">
+                <div class="client-form">
+                    <h3 style="margin-bottom: 20px; color: #2c3e50;">📋 Informazioni Cliente</h3>
+                    <div class="form-group">
+                        <label class="form-label">Nome Cliente (opzionale - per i tuoi record)</label>
+                        <input type="text" class="form-input" id="clientName" placeholder="es. Mario Rossi / Azienda XYZ">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo di Progetto</label>
+                        <input type="text" class="form-input" id="projectType" placeholder="es. Sito web, App mobile, Consulenza..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Da quanto tempo lavori con questo cliente?</label>
+                        <select class="form-input" id="workDuration" required>
+                            <option value="">Seleziona...</option>
+                            <option value="new">Meno di 1 mese</option>
+                            <option value="short">1-6 mesi</option>
+                            <option value="medium">6-12 mesi</option>
+                            <option value="long">Oltre 1 anno</option>
+                        </select>
+                    </div>
+                    <button class="start-btn" onclick="startAssessment()">🔍 Inizia Valutazione</button>
+                </div>
+            </div>
+
+            <!-- Sezione valutazione -->
+            <div id="assessmentSection" class="assessment-section">
+                <div class="client-info" id="clientInfo"></div>
+                
+                <div class="progress-section">
+                    <div>Domanda <span id="currentQ">1</span> di 12</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <div id="questionsContainer">
+                    <!-- Domande generate dinamicamente -->
+                </div>
+
+                <div style="text-align: center;">
+                    <button class="calculate-btn" id="calculateBtn" onclick="calculateToxicity()" disabled>
+                        📊 Calcola Livello Tossicità
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sezione risultati -->
+            <div id="resultsSection" class="results-section">
+                <div class="toxicity-meter">
+                    <div class="meter-inner">
+                        <div class="meter-score" id="meterScore">0</div>
+                        <div class="meter-label">PUNTI</div>
+                    </div>
+                    <div class="meter-pointer" id="meterPointer"></div>
+                </div>
+
+                <div class="result-card">
+                    <h2 class="result-title" id="resultTitle">Risultato</h2>
+                    <p class="result-description" id="resultDescription"></p>
+                    
+                    <div class="recommendations" id="recommendations"></div>
+                </div>
+
+                <button class="start-btn restart-btn" onclick="restart()">🔄 Valuta Altro Cliente</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Come reagisce quando gli fai notare che una sua richiesta è fuori scope?",
+                options: [
+                    { text: "Comprende e discute una soluzione equa", score: 0 },
+                    { text: "Si lamenta ma alla fine accetta", score: 1 },
+                    { text: "Insiste che 'dovrebbe essere incluso'", score: 2 },
+                    { text: "Si arrabbia e minaccia di andarsene", score: 3 }
+                ]
+            },
+            {
+                question: "Con che frequenza ti contatta fuori dall'orario lavorativo?",
+                options: [
+                    { text: "Mai o solo per vere emergenze", score: 0 },
+                    { text: "Occasionalmente, ma si scusa", score: 1 },
+                    { text: "Spesso, senza considerare l'orario", score: 2 },
+                    { text: "Costantemente, anche di notte/weekend", score: 3 }
+                ]
+            },
+            {
+                question: "Come gestisce i pagamenti?",
+                options: [
+                    { text: "Puntuale, rispetta i termini concordati", score: 0 },
+                    { text: "Qualche ritardo occasionale con giustificazioni", score: 1 },
+                    { text: "Spesso in ritardo, devi sollecitare", score: 2 },
+                    { text: "Cronica morosità, sempre scuse nuove", score: 3 }
+                ]
+            },
+            {
+                question: "Quando riceve il tuo lavoro, la sua reazione tipica è:",
+                options: [
+                    { text: "Apprezzamento e feedback costruttivo", score: 0 },
+                    { text: "Soddisfazione con qualche piccola modifica", score: 1 },
+                    { text: "Critique negative su dettagli minori", score: 2 },
+                    { text: "Rifiuta tutto e chiede di rifare da capo", score: 3 }
+                ]
+            },
+            {
+                question: "Come ti senti dopo una chiamata/meeting con questo cliente?",
+                options: [
+                    { text: "Energizzato e motivato", score: 0 },
+                    { text: "Neutrale, business normale", score: 1 },
+                    { text: "Stanco e leggermente stressato", score: 2 },
+                    { text: "Esausto, ansioso, demotivato", score: 3 }
+                ]
+            },
+            {
+                question: "Rispetto alle deadline, questo cliente:",
+                options: [
+                    { text: "Le rispetta e pianifica con anticipo", score: 0 },
+                    { text: "Occasionalmente chiede urgenze ragionevoli", score: 1 },
+                    { text: "'Tutto è urgente' anche quando non lo è", score: 2 },
+                    { text: "Pretende miracoli impossibili 'per ieri'", score: 3 }
+                ]
+            },
+            {
+                question: "Come tratta te e il tuo tempo?",
+                options: [
+                    { text: "Con rispetto professionale e comprensione", score: 0 },
+                    { text: "Generalmente rispettoso", score: 1 },
+                    { text: "A volte fa commenti sminuenti", score: 2 },
+                    { text: "Ti tratta come un dipendente sottopagato", score: 3 }
+                ]
+            },
+            {
+                question: "Quando deve prendere decisioni sul progetto:",
+                options: [
+                    { text: "È decisivo e si assume responsabilità", score: 0 },
+                    { text: "Chiede la tua opinione e decide", score: 1 },
+                    { text: "Indeciso, cambia idea continuamente", score: 2 },
+                    { text: "Scarica su di te tutte le decisioni difficili", score: 3 }
+                ]
+            },
+            {
+                question: "La comunicazione con questo cliente è:",
+                options: [
+                    { text: "Chiara, professionale, costruttiva", score: 0 },
+                    { text: "Buona, con occasionali malintesi", score: 1 },
+                    { text: "Confusa, spesso devi chiedere chiarimenti", score: 2 },
+                    { text: "Tossica, aggressive, contraddittoria", score: 3 }
+                ]
+            },
+            {
+                question: "Quando gli spieghi perché qualcosa costa/richiede tempo:",
+                options: [
+                    { text: "Ascolta e comprende il ragionamento", score: 0 },
+                    { text: "Negozia in modo ragionevole", score: 1 },
+                    { text: "Mette sempre in dubbio le tue stime", score: 2 },
+                    { text: "'Il mio ex freelancer lo faceva gratis/velocemente'", score: 3 }
+                ]
+            },
+            {
+                question: "Il suo atteggiamento verso il tuo expertise è:",
+                options: [
+                    { text: "Ti considera l'esperto e si fida", score: 0 },
+                    { text: "Rispetta le tue competenze", score: 1 },
+                    { text: "Spesso pensa di saperne più di te", score: 2 },
+                    { text: "Ti micromanage ogni singolo dettaglio", score: 3 }
+                ]
+            },
+            {
+                question: "Se dovessi raccomandare questo cliente a un collega:",
+                options: [
+                    { text: "Lo farei senza esitazione", score: 0 },
+                    { text: "Sì, con alcune note sui suoi quirks", score: 1 },
+                    { text: "Solo se il collega ha davvero bisogno di soldi", score: 2 },
+                    { text: "Mai nella vita, proteggerei il collega", score: 3 }
+                ]
+            }
+        ];
+
+        let currentAnswers = [];
+        let clientInfo = {};
+
+        function startAssessment() {
+            const name = document.getElementById('clientName').value || 'Cliente Anonimo';
+            const project = document.getElementById('projectType').value;
+            const duration = document.getElementById('workDuration').value;
+
+            if (!project || !duration) {
+                alert('Completa tutti i campi obbligatori');
+                return;
+            }
+
+            clientInfo = { name, project, duration };
+            
+            document.getElementById('clientForm').style.display = 'none';
+            document.getElementById('assessmentSection').classList.add('active');
+            
+            renderClientInfo();
+            renderQuestions();
+        }
+
+        function renderClientInfo() {
+            const durationText = {
+                'new': 'Meno di 1 mese',
+                'short': '1-6 mesi',
+                'medium': '6-12 mesi',
+                'long': 'Oltre 1 anno'
+            };
+
+            document.getElementById('clientInfo').innerHTML = `
+                <strong>Cliente:</strong> ${clientInfo.name} | 
+                <strong>Progetto:</strong> ${clientInfo.project} | 
+                <strong>Durata collaborazione:</strong> ${durationText[clientInfo.duration]}
+            `;
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                questionDiv.innerHTML = `
+                    <div class="question-header">
+                        <div class="question-number">${index + 1}</div>
+                        <div class="question-text">${q.question}</div>
+                    </div>
+                    <div class="options-grid">
+                        ${q.options.map((option, optIndex) => `
+                            <div class="option" onclick="selectAnswer(${index}, ${optIndex})">
+                                <div class="option-text">${option.text}</div>
+                                <div class="option-score">${option.score}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function selectAnswer(questionIndex, optionIndex) {
+            // Rimuovi selezioni precedenti per questa domanda
+            const questionContainer = document.querySelectorAll('.question-container')[questionIndex];
+            questionContainer.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            
+            // Seleziona nuova opzione
+            const selectedOption = questionContainer.querySelectorAll('.option')[optionIndex];
+            selectedOption.classList.add('selected');
+            
+            // Salva risposta
+            currentAnswers[questionIndex] = optionIndex;
+            
+            // Aggiorna progresso
+            updateProgress();
+            
+            // Abilita pulsante se tutte le domande sono risposte
+            if (currentAnswers.filter(a => a !== undefined).length === questions.length) {
+                document.getElementById('calculateBtn').disabled = false;
+            }
+        }
+
+        function updateProgress() {
+            const answered = currentAnswers.filter(a => a !== undefined).length;
+            const progress = (answered / questions.length) * 100;
+            
+            document.getElementById('currentQ').textContent = answered + 1;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function calculateToxicity() {
+            let totalScore = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (currentAnswers[i] !== undefined) {
+                    totalScore += questions[i].options[currentAnswers[i]].score;
+                }
+            }
+            
+            showResults(totalScore);
+        }
+
+        function showResults(score) {
+            document.getElementById('assessmentSection').classList.remove('active');
+            document.getElementById('resultsSection').classList.add('active');
+            
+            // Anima il meter
+            document.getElementById('meterScore').textContent = score;
+            
+            // Calcola rotazione del puntatore (0-36 = 0-360 gradi)
+            const rotation = (score / 36) * 360;
+            document.getElementById('meterPointer').style.transform = 
+                `translateX(-50%) rotate(${rotation}deg)`;
+            
+            let level, title, description, recommendations, className;
+            
+            if (score <= 6) {
+                level = 'CLIENTE SANO';
+                className = 'level-safe';
+                title = '✅ CLIENTE SANO';
+                description = 'Complimenti! Questo cliente rispetta te, il tuo tempo e il tuo lavoro. È il tipo di relazione professionale che dovresti cercare di replicare.';
+                recommendations = `
+                    <h4>🎯 Raccomandazioni:</h4>
+                    <ul class="rec-list">
+                        <li class="rec-item">✨ Mantieni questo cliente: è oro!</li>
+                        <li class="rec-item">📈 Considera di aumentare le tue tariffe con lui</li>
+                        <li class="rec-item">🗣️ Chiedigli referral - clienti sani attraggono clienti sani</li>
+                        <li class="rec-item">📝 Usa questa relazione come benchmark per valutare altri clienti</li>
+                    </ul>
+                `;
+            } else if (score <= 12) {
+                level = 'DA TENERE SOTTO CONTROLLO';
+                className = 'level-watch';
+                title = '⚠️ DA TENERE SOTTO CONTROLLO';
+                description = 'Un cliente generalmente gestibile ma con alcuni comportamenti problematici. Con i giusti confini può migliorare.';
+                recommendations = `
+                    <h4>📋 Piano d\'azione:</h4>
+                    <ul class="rec-list">
+                        <li class="rec-item">🚧 Stabilisci confini più chiari (orari, scope, comunicazione)</li>
+                        <li class="rec-item">📄 Formalizza tutto per iscritto</li>
+                        <li class="rec-item">⏰ Implementa politiche più rigide su pagamenti e modifiche</li>
+                        <li class="rec-item">📊 Monitora se la situazione migliora o peggiora</li>
+                    </ul>
+                `;
+            } else if (score <= 24) {
+                level = 'PERICOLOSO PER IL TUO BENESSERE';
+                className = 'level-danger';
+                title = '🚨 PERICOLOSO PER IL TUO BENESSERE';
+                description = 'Questo cliente sta impattando negativamente sulla tua salute mentale. È tempo di azioni drastiche.';
+                recommendations = `
+                    <h4>🛑 Azioni immediate:</h4>
+                    <ul class="rec-list">
+                        <li class="rec-item">💰 Aumenta le tariffe del 50-100% (molti se ne andranno)</li>
+                        <li class="rec-item">📋 Contratto rigidissimo con penali per comportamenti tossici</li>
+                        <li class="rec-item">⏰ Limita drasticamente la comunicazione (email solo, orari fissi)</li>
+                        <li class="rec-item">🎯 Inizia a cercare clienti sostitutivi SUBITO</li>
+                        <li class="rec-item">❌ Considera seriamente di terminare la collaborazione</li>
+                    </ul>
+                `;
+            } else {
+                level = 'CLIENTE TOSSICO - FUGGI!';
+                className = 'level-toxic';
+                title = '💀 CLIENTE TOSSICO - FUGGI!';
+                description = 'Questo cliente è una minaccia per la tua salute mentale, la tua carriera e la tua vita. Non ci sono soldi che valgano questo stress.';
+                recommendations = `
+                    <h4>🚨 PIANO DI FUGA IMMEDIATO:</h4>
+                    <ul class="rec-list">
+                        <li class="rec-item">🏃‍♂️ TERMINA la collaborazione appena possibile</li>
+                        <li class="rec-item">💸 Accetta anche di perdere soldi pur di uscirne</li>
+                        <li class="rec-item">📱 Blocca tutti i canali di comunicazione non essenziali</li>
+                        <li class="rec-item">🛡️ Documenta tutto per proteggerti legalmente</li>
+                        <li class="rec-item">👨‍⚕️ Considera supporto psicologico se ha impattato la tua salute</li>
+                        <li class="rec-item">📝 Crea una "blacklist" per non ripetere gli stessi errori</li>
+                    </ul>
+                `;
+
+                // Banner di urgenza per clienti tossici
+                if (score > 24) {
+                    document.querySelector('.result-card').insertAdjacentHTML('afterbegin', `
+                        <div class="urgency-banner">
+                            🆘 SITUAZIONE CRITICA: Questo livello di tossicità può causare burnout, depressione e problemi di salute fisica. 
+                            La tua salute mentale vale più di qualsiasi progetto. AGISCI ORA.
+                        </div>
+                    `);
+                }
+            }
+            
+            // Aggiorna UI risultati
+            document.querySelector('.meter-score').className = `meter-score ${className}`;
+            document.getElementById('resultTitle').textContent = title;
+            document.getElementById('resultTitle').className = `result-title ${className}`;
+            document.getElementById('resultDescription').textContent = description;
+            document.getElementById('recommendations').innerHTML = recommendations;
+            
+            // Scroll to results
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function restart() {
+            currentAnswers = [];
+            clientInfo = {};
+            
+            document.getElementById('resultsSection').classList.remove('active');
+            document.getElementById('clientForm').style.display = 'block';
+            
+            // Reset form
+            document.getElementById('clientName').value = '';
+            document.getElementById('projectType').value = '';
+            document.getElementById('workDuration').value = '';
+            document.getElementById('calculateBtn').disabled = true;
+            
+            // Reset progress
+            document.getElementById('currentQ').textContent = '1';
+            document.getElementById('progressFill').style.width = '0%';
+            
+            // Remove any urgency banners
+            const urgencyBanners = document.querySelectorAll('.urgency-banner');
+            urgencyBanners.forEach(banner => banner.remove());
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Inizializza con validazione form
+        document.addEventListener('DOMContentLoaded', function() {
+            const requiredFields = ['projectType', 'workDuration'];
+            const startBtn = document.querySelector('.start-btn');
+            
+            requiredFields.forEach(fieldId => {
+                document.getElementById(fieldId).addEventListener('change', function() {
+                    const allFilled = requiredFields.every(id => document.getElementById(id).value);
+                    startBtn.disabled = !allFilled;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

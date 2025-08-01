@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burnout-Proof Freelancer - Workbook Interattivo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            min-height: 100vh;
+        }
+        
+        .workbook-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .page-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 15px;
+        }
+        
+        .page-subtitle {
+            font-size: 18px;
+            color: #4a5568;
+            font-style: italic;
+        }
+        
+        .section {
+            background: white;
+            margin: 30px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            padding: 20px 30px;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-icon {
+            font-size: 24px;
+        }
+        
+        .section-content {
+            padding: 30px;
+        }
+        
+        .exercise-box {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .exercise-box::before {
+            content: '✍️';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: #f8fafc;
+            padding: 0 10px;
+            font-size: 20px;
+        }
+        
+        .exercise-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .input-group {
+            margin: 20px 0;
+        }
+        
+        .input-label {
+            display: block;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        
+        .text-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+        
+        .textarea-input {
+            min-height: 80px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .scale-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        
+        .scale-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .scale-number {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .scale-item:hover .scale-number {
+            border-color: #4299e1;
+            background: #ebf8ff;
+        }
+        
+        .scale-item.selected .scale-number {
+            background: #4299e1;
+            color: white;
+            border-color: #4299e1;
+        }
+        
+        .scale-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+            text-align: center;
+        }
+        
+        .checkbox-group {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox-item:hover {
+            background: #f7fafc;
+        }
+        
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e0;
+            border-radius: 4px;
+            position: relative;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .checkbox.checked {
+            background: #48bb78;
+            border-color: #48bb78;
+        }
+        
+        .checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: -2px;
+            left: 2px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .progress-tracker {
+            background: #f0fff4;
+            border: 2px solid #9ae6b4;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .progress-header {
+            font-weight: 700;
+            color: #276749;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #c6f6d5;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78 0%, #38a169 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .action-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .insight-box {
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+            border-left: 4px solid #f56565;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .insight-title {
+            font-weight: 700;
+            color: #c53030;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .weekly-tracker {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .day-box {
+            aspect-ratio: 1;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .day-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .day-emoji {
+            font-size: 24px;
+            margin: 5px 0;
+        }
+        
+        .day-box:hover {
+            border-color: #4299e1;
+            background: #ebf8ff;
+        }
+        
+        .commitment-box {
+            background: linear-gradient(135deg, #fef5e7 0%, #fed7aa 100%);
+            border: 2px solid #f6ad55;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .commitment-title {
+            font-weight: 700;
+            color: #c05621;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="workbook-container">
+        <!-- HEADER PAGINA -->
+        <div class="page-header">
+            <div class="page-number">Workbook - Sezione 1</div>
+            <h1 class="page-title">IL TUO ASSESSMENT PERSONALE</h1>
+            <p class="page-subtitle">Scopri dove sei ora per decidere dove andare</p>
+        </div>
+
+        <!-- SEZIONE 1: BURNOUT LEVEL -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🔥</span>
+                <span>LIVELLO BURNOUT ATTUALE</span>
+            </div>
+            <div class="section-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">ESERCIZIO 1: La Tua Situazione Oggi</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Come ti senti in questo momento? (Una parola)</label>
+                        <input type="text" class="text-input" placeholder="Es: Stressato, Confuso, Motivato..." id="current-feeling">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Valuta il tuo livello di stress (1 = Zen, 10 = Panico totale)</label>
+                        <div class="scale-selector" id="stress-scale">
+                            <div class="scale-item" data-value="1">
+                                <div class="scale-number">1</div>
+                                <div class="scale-label">Zen</div>
+                            </div>
+                            <div class="scale-item" data-value="2">
+                                <div class="scale-number">2</div>
+                            </div>
+                            <div class="scale-item" data-value="3">
+                                <div class="scale-number">3</div>
+                            </div>
+                            <div class="scale-item" data-value="4">
+                                <div class="scale-number">4</div>
+                            </div>
+                            <div class="scale-item" data-value="5">
+                                <div class="scale-number">5</div>
+                                <div class="scale-label">Normale</div>
+                            </div>
+                            <div class="scale-item" data-value="6">
+                                <div class="scale-number">6</div>
+                            </div>
+                            <div class="scale-item" data-value="7">
+                                <div class="scale-number">7</div>
+                            </div>
+                            <div class="scale-item" data-value="8">
+                                <div class="scale-number">8</div>
+                            </div>
+                            <div class="scale-item" data-value="9">
+                                <div class="scale-number">9</div>
+                            </div>
+                            <div class="scale-item" data-value="10">
+                                <div class="scale-number">10</div>
+                                <div class="scale-label">Panico</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Quante ore hai dormito la scorsa notte?</label>
+                        <input type="number" class="text-input" placeholder="Es: 6.5" min="0" max="12" step="0.5" id="sleep-hours">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEZIONE 2: RED FLAGS -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🚨</span>
+                <span>RED FLAGS PERSONALI</span>
+            </div>
+            <div class="section-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">ESERCIZIO 2: I Tuoi Segnali di Allarme</div>
+                    <p style="margin-bottom: 20px; color: #4a5568;">Spunta ogni comportamento che hai avuto nell'ultima settimana:</p>
+                    
+                    <div class="checkbox-group" id="red-flags">
+                        <div class="checkbox-item" data-flag="email-weekend">
+                            <div class="checkbox"></div>
+                            <div>
+                                <strong>Ho controllato email di lavoro nel weekend</strong><br>
+                                <small style="color: #718096;">Anche solo "dare un'occhiata veloce"</small>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" data-flag="work-while-sick">
+                            <div class="checkbox"></div>
+                            <div>
+                                <strong>Ho lavorato anche quando non stavo bene</strong><br>
+                                <small style="color: #718096;">Mal di testa, raffreddore, stanchezza estrema</small>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" data-flag="skip-meals">
+                            <div class="checkbox"></div>
+                            <div>
+                                <strong>Ho saltato pasti per lavorare</strong><br>
+                                <small style="color: #718096;">O mangiato davanti al computer</small>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" data-flag="cancel-plans">
+                            <div class="checkbox"></div>
+                            <div>
+                                <strong>Ho cancellato piani personali per un progetto</strong><br>
+                                <small style="color: #718096;">Cena con amici, palestra, hobby</small>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" data-flag="3am-work">
+                            <div class="checkbox"></div>
+                            <div>
+                                <strong>Ho lavorato dopo mezzanotte almeno una volta</strong><br>
+                                <small style="color: #718096;">Per scadenze o semplicemente perché "era in flow"</small>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" data-flag="client-anxiety">
+                            <div class="checkbox"></div>
+                            <div>
+                                <strong>Ho avuto ansia quando un cliente non rispondeva subito</strong><br>
+                                <small style="color: #718096;">"E se è arrabbiato? E se annulla tutto?"</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-tracker">
+                        <div class="progress-header">
+                            <span>🎯</span>
+                            <span>Red Flags Identificati: <span id="flags-count">0</span>/6</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="flags-progress"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEZIONE 3: WEEKLY MOOD TRACKER -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <span>TRACCIA IL TUO UMORE</span>
+            </div>
+            <div class="section-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">ESERCIZIO 3: La Tua Settimana Emotiva</div>
+                    <p style="margin-bottom: 20px; color: #4a5568;">Clicca su ogni giorno e scegli l'emoji che rappresenta il tuo umore generale:</p>
+                    
+                    <div class="weekly-tracker" id="mood-tracker">
+                        <div class="day-box" data-day="lun">
+                            <div class="day-name">LUN</div>
+                            <div class="day-emoji">😐</div>
+                        </div>
+                        <div class="day-box" data-day="mar">
+                            <div class="day-name">MAR</div>
+                            <div class="day-emoji">😐</div>
+                        </div>
+                        <div class="day-box" data-day="mer">
+                            <div class="day-name">MER</div>
+                            <div class="day-emoji">😐</div>
+                        </div>
+                        <div class="day-box" data-day="gio">
+                            <div class="day-name">GIO</div>
+                            <div class="day-emoji">😐</div>
+                        </div>
+                        <div class="day-box" data-day="ven">
+                            <div class="day-name">VEN</div>
+                            <div class="day-emoji">😐</div>
+                        </div>
+                        <div class="day-box" data-day="sab">
+                            <div class="day-name">SAB</div>
+                            <div class="day-emoji">😐</div>
+                        </div>
+                        <div class="day-box" data-day="dom">
+                            <div class="day-name">DOM</div>
+                            <div class="day-emoji">😐</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: none; background: #f7fafc; padding: 15px; border-radius: 8px; margin-top: 20px;" id="mood-selector">
+                        <p style="font-weight: 600; margin-bottom: 15px;">Scegli il tuo umore per <span id="selected-day"></span>:</p>
+                        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                            <span style="font-size: 30px; cursor: pointer;" data-mood="😫">😫</span>
+                            <span style="font-size: 30px; cursor: pointer;" data-mood="😟">😟</span>
+                            <span style="font-size: 30px; cursor: pointer;" data-mood="😐">😐</span>
+                            <span style="font-size: 30px; cursor: pointer;" data-mood="🙂">🙂</span>
+                            <span style="font-size: 30px; cursor: pointer;" data-mood="😊">😊</span>
+                            <span style="font-size: 30px; cursor: pointer;" data-mood="🤩">🤩</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEZIONE 4: GOAL SETTING -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🎯</span>
+                <span>I TUOI OBIETTIVI</span>
+            </div>
+            <div class="section-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">ESERCIZIO 4: Dove Vuoi Arrivare</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Cosa vuoi cambiare di più nella tua vita lavorativa?</label>
+                        <textarea class="text-input textarea-input" placeholder="Es: Voglio smettere di lavorare nei weekend e sentirmi meno ansioso quando un cliente non risponde..." id="main-goal"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Come ti vorresti sentire tra 3 mesi? (3 aggettivi)</label>
+                        <input type="text" class="text-input" placeholder="Es: Rilassato, Sicuro, Energico" id="future-feelings">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Qual è la tua più grande paura come freelancer?</label>
+                        <input type="text" class="text-input" placeholder="Es: Rimanere senza clienti, non essere abbastanza bravo..." id="biggest-fear">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMMITMENT FINALE -->
+        <div class="commitment-box">
+            <div class="commitment-title">🤝 IL TUO IMPEGNO</div>
+            <div class="input-group">
+                <label class="input-label">Scrivi UNA cosa che farai diversamente questa settimana:</label>
+                <textarea class="text-input textarea-input" placeholder="Es: Spegnerò il telefono ogni sera dalle 20 alle 22..." id="weekly-commitment"></textarea>
+            </div>
+            
+            <button class="action-button" onclick="saveProgress()">
+                💾 Salva il Mio Progress
+            </button>
+        </div>
+
+        <!-- INSIGHT BOX -->
+        <div class="insight-box" id="personal-insight" style="display: none;">
+            <div class="insight-title">
+                <span>💡</span>
+                <span>Il Tuo Insight Personalizzato</span>
+            </div>
+            <div id="insight-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Variables per tracciare i dati
+        let stressLevel = 0;
+        let redFlags = [];
+        let moodData = {};
+        let selectedDay = null;
+
+        // STRESS SCALE HANDLER
+        document.getElementById('stress-scale').addEventListener('click', function(e) {
+            if (e.target.closest('.scale-item')) {
+                // Remove previous selection
+                document.querySelectorAll('.scale-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                
+                // Add selection to clicked item
+                const item = e.target.closest('.scale-item');
+                item.classList.add('selected');
+                stressLevel = parseInt(item.dataset.value);
+                
+                updateInsight();
+            }
+        });
+
+        // RED FLAGS HANDLER
+        document.getElementById('red-flags').addEventListener('click', function(e) {
+            if (e.target.closest('.checkbox-item')) {
+                const item = e.target.closest('.checkbox-item');
+                const checkbox = item.querySelector('.checkbox');
+                const flag = item.dataset.flag;
+                
+                if (checkbox.classList.contains('checked')) {
+                    checkbox.classList.remove('checked');
+                    redFlags = redFlags.filter(f => f !== flag);
+                } else {
+                    checkbox.classList.add('checked');
+                    redFlags.push(flag);
+                }
+                
+                updateFlagsProgress();
+                updateInsight();
+            }
+        });
+
+        // MOOD TRACKER HANDLER
+        document.getElementById('mood-tracker').addEventListener('click', function(e) {
+            if (e.target.closest('.day-box')) {
+                selectedDay = e.target.closest('.day-box').dataset.day;
+                document.getElementById('selected-day').textContent = selectedDay.toUpperCase();
+                document.getElementById('mood-selector').style.display = 'block';
+            }
+        });
+
+        document.getElementById('mood-selector').addEventListener('click', function(e) {
+            if (e.target.dataset.mood) {
+                const mood = e.target.dataset.mood;
+                moodData[selectedDay] = mood;
+                
+                // Update the day box
+                const dayBox = document.querySelector(`[data-day="${selectedDay}"]`);
+                dayBox.querySelector('.day-emoji').textContent = mood;
+                
+                // Hide selector
+                document.getElementById('mood-selector').style.display = 'none';
+                updateInsight();
+            }
+        });
+
+        // UPDATE FUNCTIONS
+        function updateFlagsProgress() {
+            const count = redFlags.length;
+            const percentage = (count / 6) * 100;
+            
+            document.getElementById('flags-count').textContent = count;
+            document.getElementById('flags-progress').style.width = percentage + '%';
+        }
+
+        function updateInsight() {
+            const insightBox = document.getElementById('personal-insight');
+            const insightContent = document.getElementById('insight-content');
+            
+            let insight = '';
+            
+            if (stressLevel >= 8 && redFlags.length >= 4) {
+                insight = '<strong>🚨 ALERT:</strong> I tuoi dati indicano un livello di burnout preoccupante. È il momento di agire immediatamente. Concentrati sul Framework B.A.L.A.N.C.E. partendo da "Boundaries" - devi riprendere il controllo prima che peggiori.';
+            } else if (stressLevel >= 6 && redFlags.length >= 2) {
+                insight = '<strong>⚠️ ATTENZIONE:</strong> Sei in zona di rischio. I segnali ci sono tutti. La buona notizia? Sei ancora in tempo per invertire la rotta. Inizia subito con piccoli cambiamenti consistenti.';
+            } else if (redFlags.length >= 3) {
+                insight = '<strong>💡 INSIGHT:</strong> Il tuo livello di stress sembra gestibile, ma i comportamenti che hai indicato potrebbero portarti al burnout nel medio termine. Prevenire è meglio che curare!';
+            } else {
+                insight = '<strong>✅ BENE:</strong> Sembri avere una situazione relativamente sotto controllo. Usa questo libro per ottimizzare ulteriormente e creare sistemi solidi per il futuro.';
+            }
+            
+            insightContent.innerHTML = insight;
+            insightBox.style.display = 'block';
+        }
+
+        function saveProgress() {
+            const feeling = document.getElementById('current-feeling').value;
+            const sleepHours = document.getElementById('sleep-hours').value;
+            const mainGoal = document.getElementById('main-goal').value;
+            const futurefeelings = document.getElementById('future-feelings').value;
+            const biggestFear = document.getElementById('biggest-fear').value;
+            const commitment = document.getElementById('weekly-commitment').value;
+            
+            // Simula il salvataggio
+            alert(`🎉 Progress Salvato!\n\nHai completato il tuo assessment iniziale.\n\nProssimi passi:\n• Tieni traccia del tuo progresso\n• Applica il Framework B.A.L.A.N.C.E.\n• Torna qui ogni settimana per aggiornare\n\nIl tuo impegno: "${commitment}"`);
+        }
+    </script>
+</body>
+</html>

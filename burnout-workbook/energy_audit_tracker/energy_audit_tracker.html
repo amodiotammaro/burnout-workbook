@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Audit Tracker - Freelancer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .week-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .week-nav {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .week-nav:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .week-display {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .day-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .day-card {
+            background: #f8f9fc;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e1e8ed;
+            transition: all 0.3s ease;
+        }
+
+        .day-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.1);
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .day-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .day-date {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .energy-levels {
+            display: grid;
+            gap: 15px;
+        }
+
+        .time-slot {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .time-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .energy-scale {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .energy-level {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #e1e8ed;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .energy-level:hover {
+            transform: scale(1.1);
+        }
+
+        .energy-level.level-1 { background: #e74c3c; color: white; }
+        .energy-level.level-2 { background: #f39c12; color: white; }
+        .energy-level.level-3 { background: #f1c40f; color: #2c3e50; }
+        .energy-level.level-4 { background: #2ecc71; color: white; }
+        .energy-level.level-5 { background: #27ae60; color: white; }
+
+        .energy-level.selected {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            border-color: #2c3e50;
+        }
+
+        .activity-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            resize: none;
+            height: 60px;
+        }
+
+        .activity-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .analytics-section {
+            background: #f8f9fc;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 2px solid #e1e8ed;
+        }
+
+        .analytics-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .analytics-header h3 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .insights {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .insights h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .insight-item {
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .insight-icon {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .export-section {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+
+        .energy-legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 768px) {
+            .day-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .energy-scale {
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ ENERGY AUDIT TRACKER</h1>
+            <p>Monitora i tuoi livelli di energia per ottimizzare la produttività</p>
+            <div class="week-selector">
+                <button class="week-nav" onclick="changeWeek(-1)">← Settimana Precedente</button>
+                <div class="week-display" id="weekDisplay">Settimana del 22-28 Luglio 2025</div>
+                <button class="week-nav" onclick="changeWeek(1)">Settimana Successiva →</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="energy-legend">
+                <div class="legend-item">
+                    <div class="legend-color level-1"></div>
+                    <span>1 - Esausto</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color level-2"></div>
+                    <span>2 - Basso</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color level-3"></div>
+                    <span>3 - Medio</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color level-4"></div>
+                    <span>4 - Alto</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color level-5"></div>
+                    <span>5 - Massimo</span>
+                </div>
+            </div>
+
+            <div class="day-grid" id="dayGrid">
+                <!-- I giorni verranno generati dinamicamente -->
+            </div>
+
+            <div class="analytics-section">
+                <div class="analytics-header">
+                    <h3>📊 Analisi Settimanale</h3>
+                    <p>Insights automatici sui tuoi pattern energetici</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgEnergy">-</div>
+                        <div class="stat-label">Media Energia</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="peakDay">-</div>
+                        <div class="stat-label">Giorno Migliore</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="lowDay">-</div>
+                        <div class="stat-label">Giorno Peggiore</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="peakTime">-</div>
+                        <div class="stat-label">Orario Top</div>
+                    </div>
+                </div>
+
+                <div class="insights" id="insights">
+                    <h4>💡 Insights Personalizzati</h4>
+                    <div id="insightsList">
+                        <p style="text-align: center; color: #7f8c8d;">Compila almeno 3 giorni per vedere gli insights automatici</p>
+                    </div>
+                </div>
+
+                <div class="export-section">
+                    <h4 style="margin-bottom: 15px;">Esporta i tuoi dati</h4>
+                    <button class="btn" onclick="exportToCSV()">📊 Esporta CSV</button>
+                    <button class="btn secondary" onclick="generateReport()">📋 Genera Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+        const timeSlots = [
+            { label: 'Mattino (6-12)', key: 'morning' },
+            { label: 'Pomeriggio (12-18)', key: 'afternoon' },
+            { label: 'Sera (18-24)', key: 'evening' }
+        ];
+
+        let currentWeek = 0;
+        let energyData = {};
+
+        function initTracker() {
+            renderWeek();
+            updateAnalytics();
+        }
+
+        function changeWeek(direction) {
+            currentWeek += direction;
+            updateWeekDisplay();
+            renderWeek();
+            updateAnalytics();
+        }
+
+        function updateWeekDisplay() {
+            const today = new Date();
+            const weekStart = new Date(today);
+            weekStart.setDate(today.getDate() - today.getDay() + 1 + (currentWeek * 7));
+            
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+
+            const formatDate = (date) => {
+                return `${date.getDate()}/${date.getMonth() + 1}`;
+            };
+
+            document.getElementById('weekDisplay').textContent = 
+                `Settimana del ${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+        }
+
+        function renderWeek() {
+            const container = document.getElementById('dayGrid');
+            container.innerHTML = '';
+
+            days.forEach((day, dayIndex) => {
+                const dayKey = `${currentWeek}-${dayIndex}`;
+                const dayCard = document.createElement('div');
+                dayCard.className = 'day-card';
+                
+                const today = new Date();
+                const currentDate = new Date(today);
+                currentDate.setDate(today.getDate() - today.getDay() + 1 + dayIndex + (currentWeek * 7));
+                
+                dayCard.innerHTML = `
+                    <div class="day-header">
+                        <div class="day-name">${day}</div>
+                        <div class="day-date">${currentDate.getDate()}/${currentDate.getMonth() + 1}</div>
+                    </div>
+                    <div class="energy-levels">
+                        ${timeSlots.map(slot => `
+                            <div class="time-slot">
+                                <div class="time-label">${slot.label}</div>
+                                <div class="energy-scale">
+                                    ${[1,2,3,4,5].map(level => `
+                                        <div class="energy-level level-${level} ${getSelectedClass(dayKey, slot.key, level)}" 
+                                             onclick="setEnergy('${dayKey}', '${slot.key}', ${level})">
+                                            ${level}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <textarea class="activity-input" 
+                                          placeholder="Cosa hai fatto in questo orario?"
+                                          onchange="setActivity('${dayKey}', '${slot.key}', this.value)">${getActivity(dayKey, slot.key)}</textarea>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                container.appendChild(dayCard);
+            });
+        }
+
+        function getSelectedClass(dayKey, timeKey, level) {
+            if (!energyData[dayKey] || !energyData[dayKey][timeKey]) return '';
+            return energyData[dayKey][timeKey].energy === level ? 'selected' : '';
+        }
+
+        function getActivity(dayKey, timeKey) {
+            if (!energyData[dayKey] || !energyData[dayKey][timeKey]) return '';
+            return energyData[dayKey][timeKey].activity || '';
+        }
+
+        function setEnergy(dayKey, timeKey, level) {
+            if (!energyData[dayKey]) energyData[dayKey] = {};
+            if (!energyData[dayKey][timeKey]) energyData[dayKey][timeKey] = {};
+            
+            energyData[dayKey][timeKey].energy = level;
+            
+            // Rimuovi selezione precedente e aggiungi nuova
+            const timeSlot = event.target.closest('.time-slot');
+            timeSlot.querySelectorAll('.energy-level').forEach(el => el.classList.remove('selected'));
+            event.target.classList.add('selected');
+            
+            updateAnalytics();
+        }
+
+        function setActivity(dayKey, timeKey, activity) {
+            if (!energyData[dayKey]) energyData[dayKey] = {};
+            if (!energyData[dayKey][timeKey]) energyData[dayKey][timeKey] = {};
+            
+            energyData[dayKey][timeKey].activity = activity;
+        }
+
+        function updateAnalytics() {
+            const weekData = getWeekData();
+            if (weekData.length === 0) return;
+
+            // Calcola statistiche
+            const avgEnergy = (weekData.reduce((sum, entry) => sum + entry.energy, 0) / weekData.length).toFixed(1);
+            
+            // Trova giorno migliore/peggiore
+            const dayAverages = {};
+            weekData.forEach(entry => {
+                if (!dayAverages[entry.day]) dayAverages[entry.day] = [];
+                dayAverages[entry.day].push(entry.energy);
+            });
+
+            let peakDay = '', lowDay = '';
+            let maxAvg = 0, minAvg = 5;
+
+            Object.keys(dayAverages).forEach(day => {
+                const avg = dayAverages[day].reduce((sum, val) => sum + val, 0) / dayAverages[day].length;
+                if (avg > maxAvg) {
+                    maxAvg = avg;
+                    peakDay = days[day];
+                }
+                if (avg < minAvg) {
+                    minAvg = avg;
+                    lowDay = days[day];
+                }
+            });
+
+            // Trova orario migliore
+            const timeAverages = {};
+            weekData.forEach(entry => {
+                if (!timeAverages[entry.time]) timeAverages[entry.time] = [];
+                timeAverages[entry.time].push(entry.energy);
+            });
+
+            let peakTime = '';
+            let maxTimeAvg = 0;
+            Object.keys(timeAverages).forEach(time => {
+                const avg = timeAverages[time].reduce((sum, val) => sum + val, 0) / timeAverages[time].length;
+                if (avg > maxTimeAvg) {
+                    maxTimeAvg = avg;
+                    peakTime = timeSlots.find(slot => slot.key === time)?.label || time;
+                }
+            });
+
+            // Aggiorna UI
+            document.getElementById('avgEnergy').textContent = avgEnergy;
+            document.getElementById('peakDay').textContent = peakDay || '-';
+            document.getElementById('lowDay').textContent = lowDay || '-';
+            document.getElementById('peakTime').textContent = peakTime || '-';
+
+            // Genera insights
+            generateInsights(weekData, avgEnergy, peakDay, lowDay, peakTime);
+        }
+
+        function getWeekData() {
+            const weekData = [];
+            Object.keys(energyData).forEach(dayKey => {
+                if (!dayKey.startsWith(currentWeek + '-')) return;
+                
+                const dayIndex = parseInt(dayKey.split('-')[1]);
+                Object.keys(energyData[dayKey]).forEach(timeKey => {
+                    const entry = energyData[dayKey][timeKey];
+                    if (entry.energy) {
+                        weekData.push({
+                            day: dayIndex,
+                            time: timeKey,
+                            energy: entry.energy,
+                            activity: entry.activity
+                        });
+                    }
+                });
+            });
+            return weekData;
+        }
+
+        function generateInsights(weekData, avgEnergy, peakDay, lowDay, peakTime) {
+            if (weekData.length < 3) return;
+
+            const insights = [];
+            const avgEnergyNum = parseFloat(avgEnergy);
+
+            if (avgEnergyNum < 2.5) {
+                insights.push({
+                    icon: '🚨',
+                    text: 'La tua energia media è critica. Considera di ridurre il carico di lavoro e consultare un professionista.'
+                });
+            } else if (avgEnergyNum < 3.5) {
+                insights.push({
+                    icon: '⚠️',
+                    text: 'I tuoi livelli energetici sono sotto la media. È tempo di implementare strategie di recupero.'
+                });
+            } else {
+                insights.push({
+                    icon: '✅',
+                    text: 'I tuoi livelli energetici sono buoni! Mantieni le attuali abitudini positive.'
+                });
+            }
+
+            if (peakTime.includes('Mattino')) {
+                insights.push({
+                    icon: '🌅',
+                    text: 'Sei più produttivo al mattino. Programma i task più impegnativi tra le 6-12.'
+                });
+            } else if (peakTime.includes('Sera')) {
+                insights.push({
+                    icon: '🌙',
+                    text: 'Il tuo picco è serale. Considera di spostare il lavoro creativo dopo le 18.'
+                });
+            }
+
+            // Analizza pattern settimanali
+            const weekendData = weekData.filter(entry => entry.day >= 5);
+            const weekdayData = weekData.filter(entry => entry.day < 5);
+            
+            if (weekendData.length > 0 && weekdayData.length > 0) {
+                const weekendAvg = weekendData.reduce((sum, entry) => sum + entry.energy, 0) / weekendData.length;
+                const weekdayAvg = weekdayData.reduce((sum, entry) => sum + entry.energy, 0) / weekdayData.length;
+                
+                if (weekendAvg < weekdayAvg - 0.5) {
+                    insights.push({
+                        icon: '😴',
+                        text: 'Nel weekend la tua energia cala molto. Hai bisogno di vero riposo, non solo di cambiare attività.'
+                    });
+                }
+            }
+
+            // Mostra insights
+            const container = document.getElementById('insightsList');
+            container.innerHTML = insights.map(insight => `
+                <div class="insight-item">
+                    <span class="insight-icon">${insight.icon}</span>
+                    ${insight.text}
+                </div>
+            `).join('');
+        }
+
+        function exportToCSV() {
+            const weekData = getWeekData();
+            if (weekData.length === 0) {
+                alert('Nessun dato da esportare per questa settimana');
+                return;
+            }
+
+            let csv = 'Giorno,Orario,Energia,Attività\n';
+            weekData.forEach(entry => {
+                const dayName = days[entry.day];
+                const timeName = timeSlots.find(slot => slot.key === entry.time)?.label || entry.time;
+                csv += `${dayName},${timeName},${entry.energy},"${(entry.activity || '').replace(/"/g, '""')}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `energy-audit-settimana-${Math.abs(currentWeek)}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function generateReport() {
+            const weekData = getWeekData();
+            if (weekData.length === 0) {
+                alert('Nessun dato disponibile per generare il report');
+                return;
+            }
+
+            const avgEnergy = (weekData.reduce((sum, entry) => sum + entry.energy, 0) / weekData.length).toFixed(1);
+            
+            let report = `📊 ENERGY AUDIT REPORT\n`;
+            report += `Settimana: ${document.getElementById('weekDisplay').textContent}\n\n`;
+            report += `📈 STATISTICHE:\n`;
+            report += `• Media Energia: ${avgEnergy}/5\n`;
+            report += `• Giorni tracciati: ${new Set(weekData.map(entry => entry.day)).size}/7\n`;
+            report += `• Slot temporali: ${weekData.length}\n\n`;
+            
+            report += `🎯 RACCOMANDAZIONI:\n`;
+            if (parseFloat(avgEnergy) < 3) {
+                report += `• URGENTE: Riduci il carico di lavoro\n`;
+                report += `• Consulta un medico per escludere problemi fisici\n`;
+                report += `• Implementa pause forzate ogni 2 ore\n`;
+            } else {
+                report += `• Mantieni le abitudini attuali\n`;
+                report += `• Monitora i pattern per ulteriori ottimizzazioni\n`;
+            }
+
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `energy-report-settimana-${Math.abs(currentWeek)}.txt`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Inizializza
+        updateWeekDisplay();
+        initTracker();
+    </script>
+</body>
+</html>
